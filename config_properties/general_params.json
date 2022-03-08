@@ -1,0 +1,21 @@
+{
+    "description":"",
+    "params":{
+        "modality":"EEG",
+        "name":"HeadModel_EEG",
+        "description":"",
+        "colormap":"tools/mycolormap.mat",       
+        "bcv_config":{
+            "export":true,
+            "export_path":"E:/Data/CHBM/EEG_Preprocessing"
+        },
+        "reports":{
+            "description":"",
+            "output_path":"E:/Data/CHBM/EEG_Preprocessing"
+        },
+        "tmp_path":{
+            "description":"",
+            "value":"local"
+        }                
+    }
+}
