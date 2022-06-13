@@ -1,4 +1,4 @@
-function EEGs = get_marks_and_segments(EEG,varargin)
+function [EEGs, select_events] = get_marks_and_segments(EEG,varargin)
 % GET_MARKS_AND_SEGMENTS Summary of this function goes here
 %   Detailed explanation goes here
 if(isequal(nargin,1))
@@ -22,12 +22,12 @@ if(isempty(events))
         end
     else
         EEGs        = EEG;
-    end   
+    end
 else
     countEEG = 1;
     for j=1:length(events)
         event   = events(j);
-        newEEG  = EEG;        
+        newEEG  = EEG;
         if(isequal(select_by,'segments'))
             if(isfield(newEEG,'TW') && ~isempty(newEEG.TW))
                 newEEG          = rejtime_by_segments(newEEG,'TW','event',event);
@@ -35,6 +35,10 @@ else
                     EEGs(countEEG)  = newEEG;
                     countEEG        = countEEG + 1;
                 end
+            else
+                EEGs =  newEEG;
+                select_events.events = [];
+                break;
             end
             if(isfield(newEEG,'derivatives') && ~isempty(newEEG.derivatives))
                 newEEG              = rejtime_by_segments(newEEG,'derivatives','event',event);
@@ -49,11 +53,10 @@ else
                 EEGs(countEEG)      = newEEG;
                 countEEG            = countEEG + 1;
             end
-        end        
+        end
     end
     if(~exist('EEGs','var'))
         EEGs = [];
     end
 end
 end
-

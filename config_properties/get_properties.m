@@ -28,7 +28,6 @@ for i=1:length(process_files)
         return;
     end
 end
-prep_data_type = properties.prep_data_params.params.process_type.type;
-properties.prep_data_params.params.prep_data_config = properties.prep_data_params.params.process_type.type_list{prep_data_type};
+
 end
 

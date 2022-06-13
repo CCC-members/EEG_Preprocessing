@@ -28,7 +28,6 @@ function EEGs  = eeglab_preproc(subID, file_name, data_type, eeglab_path, vararg
 %                   [min1 max1; min2 max2; ...] to exclude several time ranges. For epoched
 %                   data, the latency range must include an epoch boundary, as latency
 %                   ranges in the middle of epochs cannot be removed from epoched data.
-%   use_raw_data    - Import data from raw data (key='use_raw_data',value=true OR false)
 %
 % Outputs:
 %   EEGs            - Cleanned EEGs structure
@@ -71,26 +70,24 @@ switch lower(data_type)
         EEG         = pop_loadset(file_name);
     case 'mat'
         load(file_name);
-        if(use_raw_data)
-            EEG = F.header.EEG;
-        else
-            srate       = SAMPLING_FREQ;
-            % For Pedrito's data selection
-            load('templates/EEG_template.mat');
-            EEG.srate   = srate;
-            EEG.age     = age;
-            EEG.data    = data;
-            EEG.nbchan  = size(data,1);
-            EEG.pnts    = size(data,2);
-            EEG.xmin    = 0;
-            EEG.xmax    = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
-            EEG.times   = (0:EEG.pnts-1)/EEG.srate.*1000;
-            if(exist('labels','var'))
-                EEG.chanlocs(length(labels)+1:end,:)    = [];
-                new_labels                              = labels;
-                [EEG.chanlocs.labels]                   = new_labels{:};
-            end
+        
+        srate       = SAMPLING_FREQ;
+        % For Pedrito's data selection
+        load('templates/EEG_template.mat');
+        EEG.srate   = srate;
+        EEG.age     = age;
+        EEG.data    = data;
+        EEG.nbchan  = size(data,1);
+        EEG.pnts    = size(data,2);
+        EEG.xmin    = 0;
+        EEG.xmax    = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
+        EEG.times   = (0:EEG.pnts-1)/EEG.srate.*1000;
+        if(exist('labels','var'))
+            EEG.chanlocs(length(labels)+1:end,:)    = [];
+            new_labels                              = labels;
+            [EEG.chanlocs.labels]                   = new_labels{:};
         end
+        
     case 'matrix'
         load(file_name);
         load('templates/EEG_template.mat');
@@ -133,6 +130,7 @@ switch lower(data_type)
         end
         EEG.chanlocs = new_chanlocs;
         EEG.chaninfo = template.EEG.chaninfo;
+        
     case 'edf'
         EEG                     = pop_biosig(file_name);
         % For cuban dataset
@@ -156,13 +154,13 @@ switch lower(data_type)
         EEG.max                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
         EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
     case 'mff'
-        [EEG, com] = pop_mffimport(file_name, 'code');
+        EEG = pop_readegimff( file_name );
 end
 EEG.setname     = subID;
 EEG.subID       = subID;
 
 %% 3 Filtering by user labels
-if(exist('labels','var'))
+if(exist('labels','var') && ~isempty(labels))
     disp ("-->> Cleanning EEG bad Channels by user labels");
     EEG  = remove_eeg_channels_by_labels(labels,EEG);
 end
@@ -175,6 +173,7 @@ if verbosity
     FigName     = 'EGG signal.fig';
     savefig(FigHandle, fullfile(save_path, FigName));
     close(FigHandle);
+    close all;
 end
 
 %% Step 5: Appling notch filter to 60Hz.
@@ -208,16 +207,13 @@ if verbosity
     FigName         = 'Cross-spectrum.fig';
     savefig(FigHandle, fullfile(save_path, FigName));
     close(FigHandle);
+    close all;
 end
-if(exist('derivatives','var'))
-    EEG.derivatives = derivatives;
-else
-    EEG.derivatives = [];
-end
+
 %%
 %%  Step 9: Getting marks and segments
 %%
-EEGs = get_marks_and_segments(EEG, 'select_events', select_events);
+[EEGs, select_events] = get_marks_and_segments(EEG, 'select_events', select_events);
 try
     for i=1:length(EEGs)
         EEG = EEGs(i);
@@ -244,6 +240,7 @@ try
             FigName   = 'EGG signal.fig';
             savefig(FigHandle, fullfile(save_forder, FigName));
             close(FigHandle);
+            close all;
         end
         
         %% Step 10: Apply clean_rawdata() to reject bad channels and correct continuous data using Artifact Subspace Reconstruction (ASR).
@@ -268,6 +265,7 @@ try
             FigName     = 'Checking artifacts.fig';
             savefig(FigHandle, fullfile(save_forder, FigName));
             close(FigHandle);
+            close all;
         end
         
         if(isequal(lower(chan_action),'interpolate'))
@@ -275,7 +273,7 @@ try
             EEG_cleaned = pop_interp(EEG_cleaned, EEG.chanlocs, 'spherical');
         end
         
-        %% Running ICA        
+        %% Running ICA
         if(decompose_ica.run)
             icatype = decompose_ica.icatype.value;
             extended = decompose_ica.extended;
@@ -294,6 +292,7 @@ try
             keepcomp = 0;
             [EEG_cleaned LASTCOM]   = pop_subcomp(EEG_cleaned,components, plotag, keepcomp);
             save(fullfile(save_forder,strcat(subID, '_EEG_ICA.mat')),'-struct','EEG_cleaned','-v7.3');
+            close all;
         end
         
         %% Saving EEG plots after cleaned
@@ -315,8 +314,9 @@ try
             % Step 12: Saving EEGs before and after cleaned
             save(fullfile(save_forder,strcat(subID, '_EEG_raw.mat')),'-struct','EEG','-v7.3');
             EEG = EEG_cleaned;
-            save(fullfile(save_forder,strcat(subID, '_EEG_cleaned.mat')),'-struct','EEG','-v7.3');            
-        end       
+            save(fullfile(save_forder,strcat(subID, '_EEG_cleaned.mat')),'-struct','EEG','-v7.3');
+            close all;
+        end
         EEG = EEG_cleaned;
         EEGs(i) = EEG;
     end

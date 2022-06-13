@@ -17,47 +17,33 @@ subjects_process_error  = [];
 subjects_processed      = [];
 report_output_path      = properties.general_params.reports.output_path;
 general_params          = properties.general_params;
-preprocessed_data       = properties.prep_data_params.process_type.type_list{2};
+preprocessed_data       = properties.prep_data_params.data_config;
 
 disp(strcat('-->> Data Source:  ', preprocessed_data.base_path ));
-[base_path, name, ext]  = fileparts(preprocessed_data.base_path);
-subjects = dir(base_path);
-% load("templates/good_cases_wMRI_Usama.mat");
-% subjects(~ismember( {subjects.name}, IDg)) = [];
+[bcv_path, name, ext]  = fileparts(preprocessed_data.base_path);
+subjects = dir(bcv_path);
 subjects(ismember( {subjects.name}, {'.', '..'})) = [];  %remove . and ..
-% subjects(~ismember( {subjects.name}, {'sub-CBM00034', 'sub-CBM00044'})) = [];  %remove . and ..
-subjects_process_error = [];
-subjects_processed =[];
-Protocol_count = 0;
-for j=1:length(subjects)
-    subject_name = subjects(j).name;    
+
+for i=1:length(subjects)
+    subject_name = subjects(i).name;    
     subID = subject_name;    
     disp(strcat('-->> Processing subject: ', subID));
     disp('=================================================================');
-    
+   
     %%
-    %% Genering MEG/EEG file
-    %%
-    if(isequal(properties.prep_data_params.process_type.type,1))
-        preprocessed_data = properties.prep_data_params.process_type.type_list{1};
-        filepath = strrep(preprocessed_data.file_location,'SubID',subID);
-        base_path =  strrep(preprocessed_data.base_path,'SubID',subID);
-        data_path = fullfile(base_path,filepath);
-    elseif(isequal(properties.prep_data_params.process_type.type,2))
-        preprocessed_data = properties.prep_data_params.process_type.type_list{2};
-        if(~isequal(preprocessed_data.base_path,'none'))
-            filepath = strrep(preprocessed_data.file_location,'SubID',subID);
-            base_path =  strrep(preprocessed_data.base_path,'SubID',subID);
-            data_path = fullfile(base_path,filepath);
-        end
-    end
+    %% Processing MEG/EEG file
+    %%    
+    filepath = strrep(preprocessed_data.file_location,'SubID',subID);
+    base_path =  strrep(preprocessed_data.base_path,'SubID',subID);
+    data_path = fullfile(base_path,filepath);
+   
     if(exist('data_path','var') && (isfile(data_path) || isfolder(data_path)))
         disp ("-->> Genering MEG/EEG file");
         preprocessed_data.general_params = properties.general_params;
         preprocessed_data.clean_data = properties.prep_data_params.clean_data;
         preprocessed_data.channel_label_file = properties.prep_data_params.channel_label_file;
         if(isequal(modality,'EEG'))
-            MEEGs = import_eeg_format(subID, preprocessed_data, data_path);            
+            MEEGs = import_eeg_format(subID, preprocessed_data, data_path);             
         else
             MEEGs = import_meg_format(subID, preprocessed_data, data_path);            
         end
@@ -66,6 +52,38 @@ for j=1:length(subjects)
         continue;
     end
     
+    %%
+    %% Exporting files
+    %%
+    for j=1:length(MEEGs)
+        MEEG                    = MEEGs(j);
+        base_path               = fullfile(general_params.bcv_config.export_path);   
+        bcv_path                = fullfile(base_path,subID);
+        if(isfile(fullfile(bcv_path,'subject.mat')))
+            subject_info        = load(fullfile(bcv_path,'subject.mat'));
+            Cdata               = load(fullfile(bcv_path,subject_info.channel_dir));
+            HeadModel           = load(fullfile(bcv_path,subject_info.leadfield_dir));
+            [Cdata, HeadModel]  = filter_structural_result_by_preproc_data(MEEG.labels, Cdata, HeadModel);            
+            if(isequal(MEEG.subID,subID))                
+                action          = 'update';
+                save_output_files(action, base_path, subject_info, HeadModel, Cdata, MEEG);               
+            else
+                Shead = load(fullfile(bcv_path,subject_info.scalp_dir));
+                Sout = load(fullfile(bcv_path,subject_info.outerskull_dir)); 
+                Sinn = load(fullfile(bcv_path,subject_info.innerskull_dir));
+                Scortex = load(fullfile(bcv_path,subject_info.surf_dir));
+                action = 'event';
+                save_output_files(action, base_path, subject_info, HeadModel, Cdata, MEEG, Shead, Sout, Sinn, Scortex);
+            end            
+        else            
+                action = 'new';
+                save_output_files(action, base_path, modality, MEEG);            
+        end        
+        disp("---------------------------------------------------------------------");
+    end
+    if(length(MEEGs) > 1 && isfolder(fullfile(base_path,subID)))
+       rmdir(fullfile(base_path,subID));
+    end
     
 end
 end
