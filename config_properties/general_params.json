@@ -2,16 +2,16 @@
     "description":"",
     "params":{
         "modality":"EEG",
-        "name":"HeadModel_EEG",
         "description":"",
-        "colormap":"tools/mycolormap.mat",       
+        "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
+            "description":"",
             "export":true,
-            "export_path":"E:/Data/CHBM/EEG_Preprocessing"
+            "export_path":"/mnt/Store/Data/CMI_QC/BC-V_Structure/HeadModel_CMI_Non_DistC"
         },
         "reports":{
             "description":"",
-            "output_path":"E:/Data/CHBM/EEG_Preprocessing"
+            "output_path":"/mnt/Store/Data/CMI_QC/BST_Output/Reports/HeadModel_CMI_Non_DistC"
         },
         "tmp_path":{
             "description":"",

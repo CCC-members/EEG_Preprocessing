@@ -71,6 +71,9 @@ if(~status)
     return;
 end
 
+%%
+%% Getting params
+%%
 properties.general_params       = properties.general_params.params;
 properties.prep_data_params     = properties.prep_data_params.params;
 
@@ -80,6 +83,9 @@ else
     load('tools/mycolormap.mat');
 end
 
+%%
+%% Starting EEGLAB
+%%
 if(properties.prep_data_params.clean_data.run)
     toolbox = properties.prep_data_params.clean_data.toolbox;
     switch toolbox
@@ -95,13 +101,13 @@ if(properties.prep_data_params.clean_data.run)
 else
 end
 
-%% Process selected dataset and compute the leadfield subjects
 %%
 %% Calling dataset function to analysis
 %%
 process_error = process_interface(properties);
 
-%% Stoping BrainStorm
+
+disp('-->> Process finished...');
 disp("=================================================================");
 close all;
 clear all;

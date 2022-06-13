@@ -26,25 +26,20 @@ else
     derivatives = [];
 end
 if(properties.clean_data.run)    
-    if(isequal(lower(properties.clean_data.toolbox),'eeglab'))
-        toolbox_path    = properties.clean_data.toolbox_path;
-        max_freq        = properties.clean_data.max_freq;
-        chan_action     = properties.clean_data.rej_or_interp_chan.action;
-        select_events   = properties.clean_data.select_events;
-        clean_art_params = properties.clean_data.clean_artifacts;
-        decompose_ica   = properties.clean_data.decompose_ica;
-        if(isequal(properties.name,'raw_data'))
-           use_raw_data = true; 
-        else
-            use_raw_data = false;
-        end
+    if(isequal(lower(properties.clean_data.toolbox),'eeglab')) 
+        toolbox_path        = properties.clean_data.toolbox_path;
+        max_freq            = properties.clean_data.max_freq;
+        chan_action         = properties.clean_data.rej_or_interp_chan.action;
+        select_events       = properties.clean_data.select_events;
+        clean_art_params    = properties.clean_data.clean_artifacts;
+        decompose_ica       = properties.clean_data.decompose_ica;        
         report_output_path  = properties.general_params.reports.output_path;
-        subject_report_path = fullfile(report_output_path,'Reports',subID);
+        subject_report_path = fullfile(report_output_path,subID);
         if(~isfolder(subject_report_path))
             mkdir(subject_report_path);
         end        
         EEGs      = eeglab_preproc(subID, data_path, data_type, toolbox_path, 'verbosity', true, 'max_freq', max_freq,...
-            'labels', user_labels, 'select_events', select_events, 'use_raw_data', use_raw_data, 'derivatives', derivatives,...
+            'labels', user_labels, 'select_events', select_events, 'derivatives', derivatives,...
             'save_path', subject_report_path, 'chan_action', chan_action, 'clean_art_params', clean_art_params, 'decompose_ica', decompose_ica);        
         for i=1:length(EEGs)
             EEGs(i).labels   = {EEGs(i).chanlocs(:).labels};
@@ -100,7 +95,7 @@ else
             EEG.subID               = subID;
             EEG.setname             = subID;
     end   
-    if(exist('user_labels','var'))
+    if(exist('user_labels','var') && ~isempty(user_labels))
         disp ("-->> Cleanning EEG bad Channels by user labels");
         EEG         = remove_eeg_channels_by_labels(user_labels,EEG);
         EEG.labels  = {EEG.chanlocs(:).labels};
