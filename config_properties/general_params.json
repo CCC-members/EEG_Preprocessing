@@ -7,11 +7,11 @@
         "bcv_config":{
             "description":"",
             "export":true,
-            "export_path":"/mnt/Store/Data/CMI_QC/BC-V_Structure/HeadModel_CMI_Non_DistC"
+            "export_path":"/mnt/Store/Data/CMI_QC/BC-V_Structure/HeadModel_CMI_DistC"
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/CMI_QC/BST_Output/Reports/HeadModel_CMI_Non_DistC"
+            "output_path":"/mnt/Store/Data/CMI_QC/BST_Output/Reports/HeadModel_CMI_DistC"
         },
         "tmp_path":{
             "description":"",
