@@ -2,7 +2,7 @@ function save_error = save_output_files(varargin)
 
 save_error = [];
 %%
-%% Creating structure for each selected event
+%% Creating structure 
 %%
 
 for i=1:length(varargin)
@@ -16,12 +16,12 @@ if(isequal(action,'new'))
     action = 'meeg';
     [output_subject_dir] = create_data_structure(base_path,subID,action);
     subject_info = struct;
-    if(isfolder(output_subject_dir))
-        subject_info.name           = MEEG.subID;
-        subject_info.modality       = modality;
-        dirref                      = replace(fullfile('meeg','meeg.mat'),'\','/');
-        subject_info.meeg_dir  = dirref;       
-    end
+    subject_info.name       = MEEG.subID;
+    subject_info.modality   = modality;
+    dirref                  = replace(fullfile('meeg','meeg.mat'),'\','/');
+    subject_info.meeg_dir   = dirref;
+    subject_info.completed  = false;
+    
     disp ("-->> Saving meeg file");
     save(fullfile(base_path,MEEG.subID,subject_info.meeg_dir),'-struct','MEEG');    
     disp ("-->> Saving subject file");
@@ -29,8 +29,10 @@ if(isequal(action,'new'))
 end
 if(isequal(action,'update'))
     % Updating subject files
-    dirref = replace(fullfile('meeg','meeg.mat'),'\','/');
-    subject_info.meeg_dir = dirref;
+    dirref                  = replace(fullfile('meeg','meeg.mat'),'\','/');
+    subject_info.meeg_dir   = dirref;
+    subject_info.completed  = true;
+    
     disp ("-->> Saving MEEG file");
     if(~isfolder(fullfile(base_path,MEEG.subID,'meeg')))
         mkdir(fullfile(base_path,MEEG.subID,'meeg'));
@@ -62,6 +64,8 @@ if(isequal(action,'event'))
     subject_info.innerskull_dir = dirref;
     dirref                      = replace(fullfile('scalp','outerskull.mat'),'\','/');
     subject_info.outerskull_dir = dirref;
+    subject_info.completed      = true;
+    
     % Saving subject files
     disp ("-->> Saving MEEG file");
     save(fullfile(output_subject_dir,subject_info.meeg_dir),'-struct','MEEG');
