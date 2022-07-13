@@ -4,13 +4,13 @@
         "data_config":{                        
             "description":"",
             "subID_prefix":"",
-            "base_path":"/mnt/Store/Data/CMI_QC/EEG/SubID",
-            "file_location":"EEG/raw/mff_format/SubID",
-            "format":"mff",
-            "isfile":false,
-            "electrodes_file":"",
-            "derivatives_file":"",
-            "events_file":""
+            "base_path":"/mnt/Store/Data/CHBM/ds_bids_cbm_loris_24_11_21/SubID",
+            "file_location":"/eeg/SubID_task-protmap_eeg.edf",
+            "format":"edf",
+            "isfile":true,
+            "electrodes_file":"/eeg/SubID_task-protmap_channels.tsv",
+            "derivatives_file":"/mnt/Store/Data/CHBM/ds_bids_cbm_loris_24_11_21/derivatives/NeuronicEEG/SubID/eeg/SubID_task-protmap_annotations.tsv",
+            "events_file":"/eeg/SubID_task-protmap_events.tsv"
         },        
         "clean_data":{            
             "description":"Clean EEG channels with external Toolbox (Removing and interpolating channels)",
@@ -35,14 +35,15 @@
             },
             "rej_or_interp_chan":{
                 "description":"Default:<<interpolate>>. Type <<interpolate>> for interpolate bad channels. Type <<reject>> for reject bad channels",
-                "action":"reject"
+                "action":"interpolate"
             },
             "select_events":{                  
                 "by_description":"Default:<<empty>>. Selection of the data by <<marks>> way or <<segments>> way",
                 "by":"segments",
                 "events_description":"Type the events that you want to select from the data. If you want to extract all data leave the events list empty. For select a specific event fill the list like the events_example tab",
                 "events":[
-                    "open_eyes"
+                    "open_eyes",
+                    "closed_eyes"
                 ],
                 "events_example":[
                     "open_eyes",
@@ -53,7 +54,7 @@
                 ]
             },
             "decompose_ica":{
-                "run":true,
+                "run":false,
                 "icatype":{
                     "description":"defaul <<runica>>. Options <<runica>> <<binica>> <<jader>> <<sobi>> <<ng_ol>> <<acsobiro>>",
                     "value":"runica"
