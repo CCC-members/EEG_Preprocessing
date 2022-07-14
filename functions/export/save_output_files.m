@@ -48,10 +48,16 @@ end
 if(isequal(action,'event'))
     % Creating subject folder structure
     disp(strcat("-->> Creating subject output structure"));
+    base_path = fullfile(base_path,MEEG.event_name);
+    if(~isfolder(base_path))
+        mkdir(base_path);
+    end
     subID = MEEG.subID;
     action = 'all';
     [output_subject_dir]        = create_data_structure(base_path,subID,action);        
     subject_info.name           = MEEG.subID;
+    dirref                      = replace(fullfile('meeg','meeg.mat'),'\','/');
+    subject_info.meeg_dir       = dirref;
     dirref                      = replace(fullfile('leadfield',strcat(HeadModel.Comment,'.mat')),'\','/');
     subject_info.leadfield_dir  = dirref;
     dirref                      = replace(fullfile('surf','surf.mat'),'\','/');
@@ -64,6 +70,7 @@ if(isequal(action,'event'))
     subject_info.innerskull_dir = dirref;
     dirref                      = replace(fullfile('scalp','outerskull.mat'),'\','/');
     subject_info.outerskull_dir = dirref;
+    subject_info.event          = MEEG.event_name;
     subject_info.completed      = true;
     
     % Saving subject files

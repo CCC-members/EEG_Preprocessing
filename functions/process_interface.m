@@ -64,7 +64,7 @@ for i=1:length(subjects)
             Cdata               = load(fullfile(bcv_path,subject_info.channel_dir));
             HeadModel           = load(fullfile(bcv_path,subject_info.leadfield_dir));
             [Cdata, HeadModel]  = filter_structural_result_by_preproc_data(MEEG.labels, Cdata, HeadModel);            
-            if(isequal(MEEG.subID,subID))                
+            if(~isfield(MEEG,'event'))                
                 action          = 'update';
                 save_output_files(action, base_path, subject_info, HeadModel, Cdata, MEEG);               
             else
@@ -81,8 +81,8 @@ for i=1:length(subjects)
         end        
         disp("---------------------------------------------------------------------");
     end
-    if(length(MEEGs) > 1 && isfolder(fullfile(base_path,subID)))
-       rmdir(fullfile(base_path,subID));
+    if(isfield(MEEG,'event_name') && isfolder(fullfile(base_path,subID)))
+       rmdir(fullfile(base_path,subID), 's');
     end
     
 end

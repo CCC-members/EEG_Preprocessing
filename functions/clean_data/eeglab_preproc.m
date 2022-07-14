@@ -137,7 +137,7 @@ switch lower(data_type)
         new_labels              = replace({EEG.chanlocs.labels}','-REF','');
         [EEG.chanlocs.labels]   = new_labels{:};
         new_labels              = replace({EEG.chanlocs.labels}',' ','');
-        [EEG.chanlocs.labels]   = new_labels{:};
+        [EEG.chanlocs.labels]   = new_labels{:};        
     case 'txt'
         load('templates/EEG_template.mat');
         [filepath,filename,~]   = fileparts(file_name);
@@ -158,6 +158,10 @@ switch lower(data_type)
 end
 EEG.setname     = subID;
 EEG.subID       = subID;
+
+if(exist('derivatives','var') && ~isempty(derivatives))    
+    EEG.derivatives = derivatives;
+end
 
 %% 3 Filtering by user labels
 if(exist('labels','var') && ~isempty(labels))
@@ -219,7 +223,7 @@ try
         EEG = EEGs(i);
         events      = select_events.events;
         if(~isempty(events))
-            save_forder = fullfile(save_path,EEG.subID_sufix);
+            save_forder = fullfile(save_path,EEG.event);
             if(~isfolder(save_forder))
                 mkdir(save_forder);
             end

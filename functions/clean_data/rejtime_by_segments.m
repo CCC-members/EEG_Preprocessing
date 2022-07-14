@@ -25,10 +25,8 @@ else
     end
     events_translate    = get_envents_translate();
     [row, col]          = find( strcmp(events_translate,event)==1);
-    sufix               = events_translate{row,end};
-    EEG.setname         = strcat(EEG.setname,'_',sufix) ;
-    EEG.subID           = strcat(EEG.setname) ;
-    EEG.subID_sufix     = sufix ;
+    event_name          = events_translate{row,end};
+    EEG.event_name      = event_name ;
     if(isequal(source,'TW'))
         regions             = [EEG.TW];
     elseif(isequal(source,'derivatives'))

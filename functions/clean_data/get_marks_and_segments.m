@@ -34,18 +34,17 @@ else
                 if(~isempty(newEEG))
                     EEGs(countEEG)  = newEEG;
                     countEEG        = countEEG + 1;
-                end
-            else
-                EEGs =  newEEG;
-                select_events.events = [];
-                break;
-            end
-            if(isfield(newEEG,'derivatives') && ~isempty(newEEG.derivatives))
+                end                
+            elseif(isfield(newEEG,'derivatives') && ~isempty(newEEG.derivatives))
                 newEEG              = rejtime_by_segments(newEEG,'derivatives','event',event);
                 if(~isempty(newEEG))
                     EEGs(countEEG)  = newEEG;
                     countEEG        = countEEG + 1;
                 end
+            else
+                EEGs =  newEEG;
+                select_events.events = [];
+                break;
             end
         else
             newEEG                  = rejtime_by_marks(newEEG,'event',event);
