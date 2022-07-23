@@ -157,7 +157,6 @@ switch lower(data_type)
         EEG = pop_readegimff( file_name );
 end
 EEG.setname     = subID;
-EEG.subID       = subID;
 
 if(exist('derivatives','var') && ~isempty(derivatives))    
     EEG.derivatives = derivatives;
@@ -217,7 +216,7 @@ end
 %%
 %%  Step 9: Getting marks and segments
 %%
-[EEGs, select_events] = get_marks_and_segments(EEG, 'select_events', select_events);
+[EEGs, select_events] = get_marks_and_segments(EEG, select_events);
 try
     for i=1:length(EEGs)
         EEG = EEGs(i);

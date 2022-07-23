@@ -5,8 +5,8 @@ if(isequal(nargin,1))
     EEGs = EEG;
 end
 
-for i=1:2:length(varargin)
-    eval([varargin{i} '=  varargin{(i+1)};'])
+for i=1:length(varargin)
+    eval([inputname(i+1) '= varargin{i};']);
 end
 
 select_by   = lower(select_events.by);
