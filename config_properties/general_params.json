@@ -1,17 +1,17 @@
 {
     "description":"",
     "params":{
-        "modality":"EEG",
+        "modality":"MEG",
         "description":"",
         "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
             "description":"",
             "export":true,
-            "export_path":"/mnt/Store/Data/CHBM/BC-V_Structure/HeadModel_CHBM"
+            "export_path":"/mnt/Store/Data/Conectome/Preprocessing/BC-V_Structure/HeadModel_HCP"
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/CHBM/BST_Output/HeadModel_CHBM/Reports"
+            "output_path":"/mnt/Store/Data/Conectome/Preprocessing/BST_Output/Reports/HeadModel_HCP"
         },
         "tmp_path":{
             "description":"",
