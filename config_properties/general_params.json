@@ -1,17 +1,21 @@
 {
     "description":"",
     "params":{
-        "modality":"MEG",
+        "modality":"EEG",
         "description":"",
         "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
             "description":"",
-            "export":true,
-            "export_path":"/mnt/Store/Data/Conectome/Preprocessing/BC-V_Structure/HeadModel_HCP"
+            "base_path":"/mnt/Store/Data/CHBM_QC/BC-V_Structure/HeadModel_CHBM",
+            "anat_template":{
+                "description":"",
+                "use_template":false,
+                "template_name":"FsAverage_2020"
+            }
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/Conectome/Preprocessing/BST_Output/Reports/HeadModel_HCP"
+            "output_path":"/mnt/Store/Data/CHBM_QC/EEG_Preprocessing/Idiv_anat"
         },
         "tmp_path":{
             "description":"",

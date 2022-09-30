@@ -4,20 +4,21 @@
         "data_config":{                        
             "description":"",
             "subID_prefix":"",
-            "base_path":"/mnt/Store/Data/Conectome/Sample/SubID",
-            "file_location":"meg/SubID/MEG/Restin/rmegpreproc/SubID_MEG_5-Restin_rmegpreproc.mat",
-            "format":"mat",
+            "base_path":"/mnt/Store/Data/CHBM/ds_bids_cbm_loris_24_11_21",
+            "file_location":"eeg/SubID_task-protmap_eeg.edf",
+            "format":"edf",
             "isfile":true,
-            "electrodes_file":"",
-            "derivatives_file":"",
-            "events_file":""
+            "electrodes_file":"eeg/SubID_electrodes.tsv",
+            "derivatives_file":"/mnt/Store/Data/CHBM/ds_bids_cbm_loris_24_11_21/derivatives/NeuronicEEG/SubID/eeg/SubID_task-protmap_annotations.tsv",
+            "events_file":"eeg/SubID_task-protmap_events.tsv"
         },        
         "clean_data":{            
             "description":"Clean EEG channels with external Toolbox (Removing and interpolating channels)",
-            "run":false,
+            "run":true,
             "toolbox":"eeglab",
             "toolbox_path":"/mnt/Develop/Tools/EEG Lab/eeglab2022.0",
             "max_freq":50,
+            "freq_list":[3,6,10,22],
             "clean_artifacts":{
                 "description":"Parameter for the ASR method clean artifacts. Put default param in <<true>> to use the default configuration",
                 "default":false,
