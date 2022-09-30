@@ -64,7 +64,7 @@ properties  = get_properties();
 if(isequal(properties,'canceled'))
     return;
 end
-status      = check_properties(properties);
+[status, reject_subjects]    = check_properties(properties);
 if(~status)
     fprintf(2,strcat('\nBC-V-->> Error: The current configuration files are wrong \n'));
     disp('Please check the configuration files.');
@@ -104,7 +104,7 @@ end
 %%
 %% Calling dataset function to analysis
 %%
-process_error = process_interface(properties);
+process_error = process_interface(properties, reject_subjects);
 
 
 disp('-->> Process finished...');
