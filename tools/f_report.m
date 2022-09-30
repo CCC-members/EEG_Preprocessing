@@ -79,6 +79,8 @@ for i=1:length(reports)
         if(exist('report','var') && report.iscurrent)
             current_report = report;
             break;
+        else
+            delete(fullfile(reports(i).folder,reports(i).name));
         end
     catch
         continue;
