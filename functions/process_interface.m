@@ -100,7 +100,7 @@ for i=1:length(subjects)
     for j=1:length(MEEGs)
         MEEG                    = MEEGs(j);
         %%
-        %% Filter CHannels and LeadField by Preprocessed MEEG
+        %% Filter Channels and LeadField by Preprocessed MEEG
         %%
         base_path               = fullfile(general_params.bcv_config.base_path);
         if(general_params.bcv_config.anat_template.use_template)
@@ -112,7 +112,11 @@ for i=1:length(subjects)
         subject_info            = load(fullfile(bcv_path,'subject.mat'));
         Cdata                   = load(fullfile(bcv_path,subject_info.channel_dir));
         HeadModels              = load(fullfile(bcv_path,subject_info.leadfield_dir));
-        labels                  = {MEEG.chanlocs(:).labels};
+        if(isequal(modality,'EEG'))
+            labels              = {MEEG.chanlocs(:).labels};
+        else
+            labels              = MEEG.labels;
+        end
         [Cdata, HeadModel]      = filter_structural_result_by_preproc_data(labels, Cdata, HeadModels.HeadModel);
         HeadModels.HeadModel    = HeadModel;
         
