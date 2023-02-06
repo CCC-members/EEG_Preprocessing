@@ -1,5 +1,5 @@
 function MEG = import_meg_format(subID, properties, base_path)
-data_type    = properties.format;
+data_type    = properties.data_config.format;
 MEG = struct;
 MEG.subID = subID;
 switch data_type

@@ -1,12 +1,12 @@
 {
     "description":"",
     "params":{
-        "modality":"EEG",
+        "modality":"MEG",
         "description":"",
         "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
             "description":"",
-            "base_path":"/mnt/Store/Data/CHBM_QC/BC-V_Structure/HeadModel_CHBM",
+            "base_path":"/mnt/Store/Data/Conectome/hg_LASSO/BC-V_Structure/HeadModel_HCP_hgLASSO",
             "anat_template":{
                 "description":"",
                 "use_template":false,
@@ -15,7 +15,7 @@
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/CHBM_QC/EEG_Preprocessing/Idiv_anat"
+            "output_path":"/mnt/Store/Data/Conectome/hg_LASSO/Clean_data"
         },
         "tmp_path":{
             "description":"",

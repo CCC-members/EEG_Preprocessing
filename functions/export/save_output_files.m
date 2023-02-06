@@ -8,7 +8,11 @@ save_error = [];
 for i=1:length(varargin)
    eval([inputname(i) '= varargin{i};']); 
 end
-subID = MEEG.setname;
+if(isfield(MEEG,'setname'))
+    subID = MEEG.setname;
+else
+    subID = MEEG.subID;
+end
 if(isequal(action,'update'))
     % Updating subject files
     dirref                  = replace(fullfile('meeg','meeg.mat'),'\','/');
