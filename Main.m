@@ -106,7 +106,7 @@ end
 %%
 process_error = process_interface(properties, reject_subjects);
 
-
+restoredefaultpath;
 disp('-->> Process finished...');
 disp("=================================================================");
 close all;
