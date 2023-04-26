@@ -83,16 +83,23 @@ for i=1:length(subjects)
             derivatives = [];
         end
         
+        clean               = clean_config.run;
         toolbox_path        = clean_config.toolbox_path;
+        min_freq            = clean_config.min_freq;
         max_freq            = clean_config.max_freq;
         chan_action         = clean_config.rej_or_interp_chan.action;
         select_events       = clean_config.select_events;
         clean_art_params    = clean_config.clean_artifacts;
         decompose_ica       = clean_config.decompose_ica;  
         freq_list           = clean_config.freq_list';
-        MEEGs      = eeglab_preproc(subID, data_path, data_type, toolbox_path, 'verbosity', true, 'max_freq', max_freq,...
-            'labels', user_labels, 'select_events', select_events, 'derivatives', derivatives, 'freq_list', freq_list,...
-            'save_path', sub_report, 'chan_action', chan_action, 'clean_art_params', clean_art_params, 'decompose_ica', decompose_ica);
+        electrode_file      = clean_config.electrode_file;
+        
+        MEEGs               = eeglab_preproc(subID, data_path, data_type,toolbox_path,...
+        'clean', clean, 'verbosity', true, 'max_freq', max_freq,'min_freq', min_freq, ...
+        'electrode_file', electrode_file, 'labels', user_labels, 'select_events', ...
+        select_events, 'derivatives', derivatives, 'freq_list', freq_list,'save_path',...
+        sub_report, 'chan_action', chan_action,'clean_art_params', clean_art_params,...
+        'decompose_ica', decompose_ica);
     else
         MEEGs = import_meg_format(subID, preprocessed_params, data_path);
     end
@@ -123,16 +130,25 @@ for i=1:length(subjects)
         %%
         %% Exporting files
         %%
-        if(~isfield(MEEG,'event_name'))
-            action              = 'update';
-            save_output_files(action, base_path, subject_info, HeadModels, Cdata, MEEG);
-        else
+        if(general_params.bcv_config.anat_template.use_template)
             Shead               = load(fullfile(bcv_path,subject_info.scalp_dir));
             Sout                = load(fullfile(bcv_path,subject_info.outerskull_dir));
             Sinn                = load(fullfile(bcv_path,subject_info.innerskull_dir));
             Scortex             = load(fullfile(bcv_path,subject_info.surf_dir));
-            action              = 'event';
+            action              = 'new';
             save_output_files(action, base_path, subject_info, HeadModels, Cdata, MEEG, Shead, Sout, Sinn, Scortex);
+        else
+            if(~isfield(MEEG,'event_name'))
+                action              = 'update';
+                save_output_files(action, base_path, subject_info, HeadModels, Cdata, MEEG);
+            else
+                Shead               = load(fullfile(bcv_path,subject_info.scalp_dir));
+                Sout                = load(fullfile(bcv_path,subject_info.outerskull_dir));
+                Sinn                = load(fullfile(bcv_path,subject_info.innerskull_dir));
+                Scortex             = load(fullfile(bcv_path,subject_info.surf_dir));
+                action              = 'event';
+                save_output_files(action, base_path, subject_info, HeadModels, Cdata, MEEG, Shead, Sout, Sinn, Scortex);
+            end
         end
         disp("---------------------------------------------------------------------");
     end

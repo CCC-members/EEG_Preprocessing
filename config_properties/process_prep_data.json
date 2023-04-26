@@ -4,8 +4,8 @@
         "data_config":{                        
             "description":"",
             "subID_prefix":"",
-            "base_path":"/mnt/Store/Data/Conectome/Sample",
-            "file_location":"meg/SubID/MEG/Restin/rmegpreproc/100307_MEG_5-Restin_rmegpreproc.mat",
+            "base_path":"/mnt/Store/Data/DEAP/DEAP_EEG_Data/DEAP_Data",
+            "file_location":"eeg.mat",
             "format":"mat",
             "isfile":true,
             "electrodes_file":"",
@@ -16,9 +16,11 @@
             "description":"Clean EEG channels with external Toolbox (Removing and interpolating channels)",
             "run":false,
             "toolbox":"eeglab",
-            "toolbox_path":"/mnt/Develop/Tools/EEG Lab/eeglab2022.0",
-            "max_freq":50,
-            "freq_list":[3,6,10,22],
+            "toolbox_path":"/mnt/Develop/Tools/EEG Lab/eeglab2022.1",
+            "min_freq":4,
+            "max_freq":45,
+            "freq_list":[6,10,22,35],
+            "electrode_file":"standard_1020.elc",
             "clean_artifacts":{
                 "description":"Parameter for the ASR method clean artifacts. Put default param in <<true>> to use the default configuration",
                 "default":false,
@@ -78,6 +80,6 @@
                 }
             }
         },
-         "channel_label_file":""
+         "channel_label_file":"channel_10-20_32.json"
     }
 }
