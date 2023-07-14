@@ -208,15 +208,15 @@ f_report('Info',strcat('Edit the channel locations structure by EEGLAB template.
 chan_template = dir(fullfile(eeglab_path,'**',electrode_file));
 chan_template_file = fullfile(chan_template.folder,chan_template.name);
 EEG                             = pop_chanedit(EEG, 'lookup',chan_template_file,'eval','chans = pop_chancenter( chans, [],[]);');
-% clear_ind                       = [];
-% for i=1:length(EEG.chanlocs)
-%     if(isempty(EEG.chanlocs(i).X))
-%         clear_ind               = [clear_ind; i];
-%     end
-% end
-% EEG.chanlocs(clear_ind)         = [];
-% EEG.data(clear_ind,:)           = [];
-% EEG.nbchan                      = length(EEG.chanlocs);
+clear_ind                       = [];
+for i=1:length(EEG.chanlocs)
+    if(isempty(EEG.chanlocs(i).X))
+        clear_ind               = [clear_ind; i];
+    end
+end
+EEG.chanlocs(clear_ind)         = [];
+EEG.data(clear_ind,:)           = [];
+EEG.nbchan                      = length(EEG.chanlocs);
 if verbosity    
     spectopo(EEG.data,0,EEG.srate,'limits',[min_freq max_freq NaN NaN -10 10],'chanlocs',EEG.chanlocs,'chaninfo',EEG.chaninfo,'freq',freq_list);
     FigList                     = findobj(allchild(0), 'flat', 'Type', 'figure');

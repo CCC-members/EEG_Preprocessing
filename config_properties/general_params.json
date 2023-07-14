@@ -1,12 +1,12 @@
 {
     "description":"",
     "params":{
-        "modality":"EEG",
+        "modality":"CrossS",
         "description":"",
         "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
             "description":"",
-            "base_path":"/mnt/Store/Data/DEAP/BC-V_Structure/HeadModel_EEG_DEAP",
+            "base_path":"/mnt/Store/Data/Covid/BC-V_Structure/HeadModel_ICBM_Covid",
             "anat_template":{
                 "description":"",
                 "use_template":true,
@@ -15,7 +15,7 @@
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/DEAP/EEG_Reports"
+            "output_path":"/mnt/Store/Data/Covid/Data_reports"
         },
         "tmp_path":{
             "description":"",

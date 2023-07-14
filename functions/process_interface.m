@@ -25,7 +25,8 @@ data_params             = preprocessed_params.data_config;
 disp(strcat('-->> Data Source:  ', data_params.base_path ));
 bcv_path = data_params.base_path;
 subjects = dir(bcv_path);
-subjects(ismember( {subjects.name}, {'.', '..'})) = [];  %remove . and ..
+subjects(ismember( {subjects.name}, {'.', '..','derivatives'})) = [];  %remove . and ..
+subjects([subjects.isdir] == 0) = [];  %remove . and ..
 subjects(ismember( {subjects.name}, reject_subjects)) = [];
 
 for i=1:length(subjects)
@@ -52,9 +53,9 @@ for i=1:length(subjects)
     
     %%
     %% Processing MEG/EEG file
-    %%
-    filepath = strrep(data_params.file_location,'SubID',subID);
-    data_path = fullfile(data_params.base_path,subID,filepath);
+    %%    
+    data_path = dir(fullfile(data_params.base_path,subID,'**',strrep(data_params.file_location,'SubID',subID)));
+    data_path = fullfile(data_path.folder,data_path.name);
     disp ("-->> Genering MEG/EEG file");
     if(isequal(modality,'EEG'))
         data_type    = data_params.format;
@@ -66,14 +67,17 @@ for i=1:length(subjects)
         if(~isequal(data_params.electrodes_file,"none") && ~isempty(data_params.electrodes_file))
             filepath = strrep(data_params.electrodes_file,'SubID',subID);
             base_path =  data_params.base_path;
-            electrodes_file = fullfile(base_path,subID,filepath);
+            electrodes_file = dir(fullfile(base_path,subID,'**',filepath));
+            electrodes_file = fullfile(electrodes_file.folder,electrodes_file.name);
             if(isfile(electrodes_file))
                 electrodes = tsvread(electrodes_file);
                 user_labels = electrodes.name;
             end
         end
         if(~isequal(data_params.derivatives_file,"none") && ~isempty(data_params.derivatives_file))
-            derivatives_file = strrep(data_params.derivatives_file,'SubID',subID);
+            file_name = strrep(data_params.derivatives_file,'SubID',subID);
+            derivatives_file = dir(fullfile(data_params.base_path,'derivatives','**',subID,'eeg',file_name));
+            derivatives_file = fullfile(derivatives_file.folder,derivatives_file.name);
             if(isfile(derivatives_file))
                 derivatives = tsvread(derivatives_file);
             else
@@ -100,8 +104,11 @@ for i=1:length(subjects)
         select_events, 'derivatives', derivatives, 'freq_list', freq_list,'save_path',...
         sub_report, 'chan_action', chan_action,'clean_art_params', clean_art_params,...
         'decompose_ica', decompose_ica);
-    else
+    elseif(isequal(modality,'MEG'))
         MEEGs = import_meg_format(subID, preprocessed_params, data_path);
+    else
+        MEEGs = load(data_path);
+        MEEGs = MEEGs.data_struct;   
     end
     
     for j=1:length(MEEGs)
@@ -121,8 +128,10 @@ for i=1:length(subjects)
         HeadModels              = load(fullfile(bcv_path,subject_info.leadfield_dir));
         if(isequal(modality,'EEG'))
             labels              = {MEEG.chanlocs(:).labels};
-        else
+        elseif(isequal(modality,'MEG'))
             labels              = MEEG.labels;
+        else
+            labels              = MEEG.dnames;
         end
         [Cdata, HeadModel]      = filter_structural_result_by_preproc_data(labels, Cdata, HeadModels.HeadModel);
         HeadModels.HeadModel    = HeadModel;

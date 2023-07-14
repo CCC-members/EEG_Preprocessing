@@ -10,6 +10,8 @@ for i=1:length(varargin)
 end
 if(isfield(MEEG,'setname'))
     subID = MEEG.setname;
+elseif(isfield(MEEG,'name'))
+    subID = MEEG.name;
 else
     subID = MEEG.subID;
 end
