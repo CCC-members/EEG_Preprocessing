@@ -6,7 +6,7 @@
         "colormap":"tools/mycolormap.mat",   
         "bcv_config":{
             "description":"",
-            "base_path":"/mnt/Store/Data/Covid/BC-V_Structure/HeadModel_ICBM_Covid",
+            "base_path":"/mnt/Store/OneDrive/Data/Covid/BC-V_Structure",
             "anat_template":{
                 "description":"",
                 "use_template":true,
@@ -15,7 +15,7 @@
         },
         "reports":{
             "description":"",
-            "output_path":"/mnt/Store/Data/Covid/Data_reports"
+            "output_path":"/mnt/Store/OneDrive/Data/Covid/Data_reports"
         },
         "tmp_path":{
             "description":"",

@@ -86,18 +86,20 @@ end
 %%
 %% Starting EEGLAB
 %%
-toolbox = properties.prep_data_params.clean_data.toolbox;
-switch toolbox
-    case 'eeglab'
-        if(isfile(fullfile(properties.prep_data_params.clean_data.toolbox_path,'eeglab.m')))
-            toolbox_path    = properties.prep_data_params.clean_data.toolbox_path;
-            addpath(toolbox_path);
-            eeglab nogui;
-        else
-            fprintf(2,'\n ->> Error: The eeglab path is wrong.');
-        end
-end
+if(properties.prep_data_params.clean_data.run)
+    toolbox = properties.prep_data_params.clean_data.toolbox;
 
+    switch toolbox
+        case 'eeglab'
+            if(isfile(fullfile(properties.prep_data_params.clean_data.toolbox_path,'eeglab.m')))
+                toolbox_path    = properties.prep_data_params.clean_data.toolbox_path;
+                addpath(toolbox_path);
+                eeglab nogui;
+            else
+                fprintf(2,'\n ->> Error: The eeglab path is wrong.');
+            end
+    end
+end
 
 %%
 %% Calling dataset function to analysis
