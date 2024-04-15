@@ -18,7 +18,7 @@ if(isfield(selected_data_set, 'process_import_channel') ...
     end
 elseif(isfield(selected_data_set, 'preprocessed_eeg') )
     if(~isequal(selected_data_set.preprocessed_eeg.base_path,'none'))
-        filepath = strrep(selected_data_set.preprocessed_eeg.file_location,'SubID',subID);
+        filepath = strrep(selected_data_set.preprocessed_eeg.reference_file,'SubID',subID);
         base_path =  strrep(selected_data_set.preprocessed_eeg.base_path,'SubID',subID);
         eeg_file = fullfile(base_path,filepath);
         if(isfile(eeg_file))
