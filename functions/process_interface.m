@@ -21,7 +21,9 @@ subjects([subjects.isdir] == 0) = [];  %remove . and ..
 subjects(ismember( {subjects.name}, reject_subjects)) = [];
 
 for i=1:length(subjects)
-    subID = subjects(i).name;
+    subject = subjects(i);
+    subID = subject.name;
+
     disp(strcat("-->> Processing subject: ", subID));
     disp('==========================================================================');
 
@@ -53,6 +55,9 @@ for i=1:length(subjects)
     disp('--------------------------------------------------------------------------');
     if(properties.general_params.meeg_data.clean_data && ~isempty(properties.preproc_params.select_events.events))
         EEGs = process_import_events(properties, EEG);
+    else
+        EEGs(1).EEG = EEG;
+        EEGs(i).task = 'resting';
     end
 
     %%

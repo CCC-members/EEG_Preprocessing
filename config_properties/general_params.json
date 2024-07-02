@@ -11,7 +11,10 @@
     "meeg_data":{
         "description":"",
         "base_path":"/mnt/Data/Talia/Test_Data",
-        "reference_file":"E008A1__No.txt",
+        "reference_file":"SubID__1.txt",
+        "format":"txt",
+        "trials":true,
+        "labels":"labels_10-20.json",
         "derivatives":"",
         "clean_data":false,
         "BIDS":false
