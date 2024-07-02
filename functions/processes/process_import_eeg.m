@@ -6,8 +6,8 @@ modality    = properties.general_params.modality;
 subID       = subject.name;
 ref_file    = properties.general_params.meeg_data.reference_file;
 ref_path    = fileparts(ref_file);
-
 file = fullfile(subject.folder,subject.name,strrep(ref_file,'SubID',subID));
+
 [basepath, filename, ext] = fileparts(file);
 
 if(isequal(modality,'EEG'))
@@ -79,19 +79,42 @@ if(isequal(modality,'EEG'))
             end
         case '.txt'
             EEG                     = eeg_emptyset;
-            [~,filename,~]          = fileparts(file);
-            EEG.filename            = filename;
-            EEG.filepath            = filepath;
+            EEG.filename            = strrep(strrep(ref_file,'1.txt',''),'SubID',subID);
+            EEG.filepath            = basepath;
             EEG.subject             = subID;
-            data                    = readmatrix(file);
-            data                    = data';
-            EEG.data                = data;
+            labels                  = jsondecode(fileread(properties.general_params.meeg_data.labels));
+            EEG.chanlocs            = cell2struct(labels','labels');  
             EEG.nbchan              = length(EEG.chanlocs);
-            EEG.pnts                = size(data,2);
-            EEG.srate               = 200;
-            EEG.min                 = 0;
-            EEG.max                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
-            EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
+            if(properties.general_params.meeg_data.trials)
+                files = dir(basepath);
+                files([files.isdir]) = [];
+                for i=1:length(files)
+                    file = files(i);
+                    data = readmatrix(fullfile(file.folder,file.name));
+                    data = data';
+                    EEG.data{i} = data;
+                end
+                EEG.srate               = 100;
+                EEG.pnts                = size(data,2);
+                EEG.xmin                 = 0;
+                EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
+                EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
+                EEG.trials              = length(EEG.data);
+            else
+                [~,filename,~]          = fileparts(file);
+                EEG.filename            = filename;
+                EEG.filepath            = filepath;
+                data                    = readmatrix(file);
+                data                    = data';
+                EEG.data                = data;
+                EEG.subject             = subID;
+                EEG.nbchan              = length(EEG.chanlocs);
+                EEG.pnts                = size(data,2);
+                EEG.srate               = 200;
+                EEG.xmin                 = 0;
+                EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
+                EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
+            end          
         case 'mff'
             PLUGINLIST = evalin('base', 'PLUGINLIST');
             isInstalled = find(ismember({PLUGINLIST.plugin},{'Biosig'}),1);

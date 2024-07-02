@@ -6,15 +6,18 @@
     },
     "workspace":{
         "description":"",
-        "base_path":"/mnt/Data/Data_report/CHBMP_EEG_and_MRI/ds_bids_cbm_loris_24_11_21/derivatives",       
+        "base_path":"/mnt/Data/Talia/MIITRA"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"/mnt/Data/Data_report/CHBMP_EEG_and_MRI/ds_bids_cbm_loris_24_11_21",
-        "reference_file":"eeg/SubID_task-protmap_eeg.edf",
-        "derivatives":"NeuronicEEG",
-        "clean_data":true,
-        "BIDS":true
+        "base_path":"/mnt/Data/Talia/Test_Data",
+        "reference_file":"SubID__1.txt",
+        "format":"txt",
+        "trials":true,
+        "labels":"labels_10-20.json",
+        "derivatives":"",
+        "clean_data":false,
+        "BIDS":false
     },
     "tmp_path":{
         "description":"",
