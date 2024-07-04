@@ -57,7 +57,7 @@ for i=1:length(subjects)
         EEGs = process_import_events(properties, EEG);
     else
         EEGs(1).EEG = EEG;
-        EEGs(i).task = 'resting';
+        EEGs(1).task = 'resting';
     end
 
     %%
