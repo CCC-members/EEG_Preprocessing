@@ -37,11 +37,11 @@ for i=1:length(select_events)
     try
         times  = [regions.start; regions.end]';
         newEEG = pop_select(EEG, 'time', times);        
-        EEGs(i).EEG = eeg_checkset(newEEG);
+        EEGs(i) = eeg_checkset(newEEG);
     catch
         continue;
     end
 end
 EEGs(i+1).task = 'protmap';
-EEGs(i+1).EEG = EEG;
+EEGs(i+1) = EEG;
 end

@@ -6,17 +6,18 @@
     },
     "workspace":{
         "description":"",
-        "base_path":"/mnt/Data/Talia/MIITRA"       
+        "base_path":"/mnt/Store/SharePoint/CCC-Internal Project - Neuroimmunology - 文档/Neuroimmunology/Data/Exploratory_analysis"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"/mnt/Data/Talia/Test_Data",
-        "reference_file":"SubID__1.txt",
-        "format":"txt",
-        "trials":true,
-        "labels":"labels_10-20.json",
+        "base_path":"/mnt/Store/SharePoint/CCC-Internal Project - Neuroimmunology - 文档/Neuroimmunology/Data/Updated Data",
+        "reference_file":"eeg/SubID_task-Resting_Segment-0.asc",
+        "format":"asc",
+        "trials":false,
+        "segments":true,
+        "labels":"labels_32-channel_eego.json",
         "derivatives":"",
-        "clean_data":false,
+        "clean_data":true,
         "BIDS":false
     },
     "tmp_path":{

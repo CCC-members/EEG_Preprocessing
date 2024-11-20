@@ -1,6 +1,10 @@
 {
     "clean_data":{
         "description":"Clean EEG channels with external Toolbox (Removing and interpolating channels)",
+        "downsample":{
+            "run":false,
+            "srate":250
+        },
         "min_freq":0,
         "max_freq":50,
         "freq_list":[6,10,22,35],
