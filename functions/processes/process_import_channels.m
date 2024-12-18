@@ -84,7 +84,7 @@ for e=1:length(EEGs)
     %         EEG = pop_select(EEG, 'nochannel', reject_indx);
     %     end
     %
-    EEGs(e) = EEG;
+    newEEGs(e) = EEG;
 end
-
+    EEGs = newEEGs;
 end

@@ -2,20 +2,20 @@
     "modality":"EEG",
     "description":"",
     "eeglab":{
-        "base_path":"/mnt/Develop/Tools/EEGLAB/eeglab2023.1"
+        "base_path":"D:/Develop/Tools/eeglab"
     },
     "workspace":{
         "description":"",
-        "base_path":"/mnt/Store/SharePoint/CCC-Internal Project - Neuroimmunology - 文档/Neuroimmunology/Data/Exploratory_analysis"       
+        "base_path":"D:/OneDrive - CCLAB/Data/Lily/derivatives"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"/mnt/Store/SharePoint/CCC-Internal Project - Neuroimmunology - 文档/Neuroimmunology/Data/Updated Data",
-        "reference_file":"eeg/SubID_task-Resting_Segment-0.asc",
-        "format":"asc",
+        "base_path":"D:/OneDrive - CCLAB/Data/Lily",
+        "reference_file":"SubID_2024-12-04_12-23-51.vhdr",
+        "format":"vhdr",
         "trials":false,
-        "segments":true,
-        "labels":"labels_32-channel_eego.json",
+        "segments":false,
+        "labels":"",
         "derivatives":"",
         "clean_data":true,
         "BIDS":false

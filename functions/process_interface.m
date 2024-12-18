@@ -67,8 +67,7 @@ for i=1:length(subjects)
         end
         EEGs = nEEGs;
         clear('nEEGs');
-    else
-        EEGs(1).EEG = EEG;
+    else        
         EEGs(1).task = 'resting';
     end
 
