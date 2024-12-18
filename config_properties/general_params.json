@@ -2,21 +2,22 @@
     "modality":"EEG",
     "description":"",
     "eeglab":{
-        "base_path":"/mnt/Develop/Tools/EEGLAB/eeglab2023.1"
+        "base_path":"D:/Develop/Tools/eeglab"
     },
     "workspace":{
         "description":"",
-        "base_path":"/mnt/Data/Talia/MIITRA"       
+        "base_path":"D:/OneDrive - CCLAB/Data/Lily/derivatives"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"/mnt/Data/Talia/Test_Data",
-        "reference_file":"SubID__1.txt",
-        "format":"txt",
-        "trials":true,
-        "labels":"labels_10-20.json",
+        "base_path":"D:/OneDrive - CCLAB/Data/Lily",
+        "reference_file":"SubID_2024-12-04_12-23-51.vhdr",
+        "format":"vhdr",
+        "trials":false,
+        "segments":false,
+        "labels":"",
         "derivatives":"",
-        "clean_data":false,
+        "clean_data":true,
         "BIDS":false
     },
     "tmp_path":{

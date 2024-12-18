@@ -34,7 +34,7 @@ for i=1:length(subjects)
     disp("-->> Importing EEG file");
     disp('--------------------------------------------------------------------------');
     try
-        EEG = process_import_eeg(properties,subject);
+        EEGs = process_import_eeg(properties,subject);
     catch
          fprintf(2,'\n-->> Error Importing EEG file.\n');
          continue;
@@ -45,7 +45,7 @@ for i=1:length(subjects)
     disp('--------------------------------------------------------------------------');
     disp("-->> Importing EEG channels");
     disp('--------------------------------------------------------------------------');
-    EEG = process_import_channels(properties,EEG);
+    EEGs = process_import_channels(properties,EEGs);
 
     %%
     %% step 3: Import and edit events
@@ -54,10 +54,21 @@ for i=1:length(subjects)
     disp("-->> Selecting data events");
     disp('--------------------------------------------------------------------------');
     if(properties.general_params.meeg_data.clean_data && ~isempty(properties.preproc_params.select_events.events))
-        EEGs = process_import_events(properties, EEG);
-    else
-        EEGs(1).EEG = EEG;
-        EEGs(i).task = 'resting';
+        EEGs = process_import_events(properties, EEGs);
+    elseif(properties.general_params.meeg_data.segments)
+        for j=1:length(EEGs)
+            EEG = EEGs(j);           
+            segment = split(EEG.filename,'_');
+            segment = split(segment{end},'-');
+            segment = segment{end};
+            EEG.segment = segment;
+            EEG.task = 'Resting';
+            nEEGs(j) = EEG;
+        end
+        EEGs = nEEGs;
+        clear('nEEGs');
+    else        
+        EEGs(1).task = 'resting';
     end
 
     %%

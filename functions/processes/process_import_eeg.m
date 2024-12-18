@@ -1,4 +1,4 @@
-function EEG = process_import_eeg(properties,subject)
+function EEGs = process_import_eeg(properties,subject)
 
 % Getting params
 
@@ -29,6 +29,7 @@ if(isequal(modality,'EEG'))
             [EEG.chanlocs.labels]   = new_labels{:};
             new_labels              = replace({EEG.chanlocs.labels}','-A12','');
             [EEG.chanlocs.labels]   = new_labels{:};
+            EEGs = EEG;
         case '.eeg'
             PLUGINLIST = evalin('base', 'PLUGINLIST');
             isInstalled = find(ismember({PLUGINLIST.plugin},{'Biosig'}),1);
@@ -83,7 +84,7 @@ if(isequal(modality,'EEG'))
             EEG.filepath            = basepath;
             EEG.subject             = subID;
             labels                  = jsondecode(fileread(properties.general_params.meeg_data.labels));
-            EEG.chanlocs            = cell2struct(labels','labels');  
+            EEG.chanlocs            = cell2struct(labels','labels');
             EEG.nbchan              = length(EEG.chanlocs);
             if(properties.general_params.meeg_data.trials)
                 files = dir(basepath);
@@ -114,8 +115,8 @@ if(isequal(modality,'EEG'))
                 EEG.xmin                 = 0;
                 EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
                 EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
-            end          
-        case 'mff'
+            end
+        case '.mff'
             PLUGINLIST = evalin('base', 'PLUGINLIST');
             isInstalled = find(ismember({PLUGINLIST.plugin},{'Biosig'}),1);
             if(~isInstalled)
@@ -130,21 +131,103 @@ if(isequal(modality,'EEG'))
             end
             [base_path,hdrfile,extf] = fileparts(file);
             hdrfile = strcat(hdrfile,extf);
-            [EEG, com] = pop_loadbv(base_path, hdrfile);
-            EEG.srate = 1000;
+            [EEG, com] = pop_loadbv(base_path, hdrfile);           
             EEG.subject = subID;
             EEG.filename = filename;
             EEG.filepath = fullfile(subject.folder,subject.name,ref_path);
+            EEGs = EEG;
+        case '.asc'
+            if(properties.general_params.meeg_data.segments)
+                files = dir(fullfile(basepath,'*.asc'));
+                files([files.isdir]) = [];
+                for i=1:length(files)
+                    file = files(i);
+                    EEG                     = eeg_emptyset;
+                    EEG.filename            = strrep(file.name,'.asc','');
+                    EEG.filepath            = basepath;
+                    EEG.subject             = subID;
+                    EEG.srate               = 500;
+                    data = readmatrix(fullfile(file.folder,file.name));
+                    EEG.data = data';
+                    table = readtable(fullfile(file.folder,file.name));
+                    labels = table.Properties.VariableNames;
+                    labels              = replace(replace(labels,'_CPz',''),'_Cz','');
+                    EEG.chanlocs            = cell2struct(labels,'labels');
+                    EEG.nbchan              = length(EEG.chanlocs);
+                    EEG.pnts                = size(EEG.data,2);
+                    EEG.xmin                 = 0;
+                    EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
+                    EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
+                    EEG.trials              = 1;
+                    EEGs(i) = EEG;
+                end
+            else
+                EEG                     = eeg_emptyset;
+                EEG.filename            = filename;
+                EEG.filepath            = fullfile(subject.folder,subject.name,ref_path);
+                EEG.subject             = subID;
+                data = readmatrix(fullfile(subject.folder,subject.name,ref_path,strcat(filename,'.asc')));
+                data                    = data';
+                EEG.data                = data;
+                EEG.pnts                = size(data,2);
+                EEG.xmin                 = 0;
+                EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
+                EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
+                EEG.trials              = 1;
+            end
+        case '.mat'
+            data_info = load(fullfile(file));
+            if(isequal(properties.general_params.meeg_data.format,'spectrum'))
+                data_info = data_info.data_struct;
+                EEG                 = eeg_emptyset;
+                EEG.filename        = filename;
+                EEG.filepath        = fullfile(subject.folder,subject.name);
+                EEG.subject         = subID;
+                EEG.srate           = data_info.srate;
+                EEG.chanlocs        = cell2struct(data_info.dnames','labels'); 
+                EEG.CrossM          = data_info.CrossM;
+                EEG.EEGMachine      = data_info.EEGMachine;
+                EEG.fmax            = data_info.fmax;
+                EEG.fmin            = data_info.fmin;
+                EEG.freqrange       = data_info.freqrange;
+                EEG.nbchan          = data_info.nchan;
+                EEG.nepochs         = data_info.nepochs;
+                EEG.nt              = data_info.nt;
+                EEG.ref             = data_info.ref;
+                EEG.Spec            = data_info.Spec;
+                EEG.Spec_freqrange  = data_info.Spec_freqrange;
+                EEG.trials          = 1;
+                EEGs = EEG;
+
+                pInfo.SubID = subID;
+                pInfo.Age = data_info.age;
+                pInfo.Sex = data_info.sex;
+                if(isfile(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')))
+                    participants = jsondecode(fileread(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')));
+                    participants(end+1) = pInfo;
+                else
+                    participants(1) = pInfo;
+                end
+                saveJSON(participants,fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json'));                     
+            end
+
     end
     % Downsalmpling data
-    if(EEG.srate > 250)
-        EEG = pop_resample(EEG,250);
+    if( properties.preproc_params.clean_data.downsample.run && EEG(1).srate > properties.preproc_params.clean_data.downsample.srate)
+        for i=1:length(EEGs)
+            EEGs(i) = pop_resample(EEG(i),250);
+        end
     end
     if(properties.general_params.meeg_data.clean_data)
         min_freq = properties.preproc_params.clean_data.min_freq;
         max_freq = properties.preproc_params.clean_data.max_freq;
-        EEG = pop_eegfiltnew(EEG, 'locutoff', min_freq, 'hicutoff',max_freq, 'filtorder', 3300);
-        [EEG,changes] = eeg_checkset(EEG);
+        for i=1:length(EEGs)
+            EEG = EEGs(i);
+            EEG = pop_eegfiltnew(EEG, 'locutoff', min_freq, 'hicutoff',max_freq, 'filtorder', 3300);
+            [newEEGs(i),changes] = eeg_checkset(EEG);
+        end
+        EEGs = newEEGs;
+        clear('newEEGs');
     end
 elseif(isequal(modality,'MEG'))
     MEEGs = import_meg_format(subID, preprocessed_params, data_path);
