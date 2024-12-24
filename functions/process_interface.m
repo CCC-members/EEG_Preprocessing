@@ -20,6 +20,10 @@ subjects(ismember( {subjects.name}, {'.', '..','derivatives'})) = [];  %remove .
 subjects([subjects.isdir] == 0) = [];  %remove . and ..
 subjects(ismember( {subjects.name}, reject_subjects)) = [];
 
+if(~isfolder(fullfile(properties.general_params.workspace.base_path,'eeglab')))
+    mkdir(fullfile(properties.general_params.workspace.base_path,'eeglab'));
+end
+
 for i=1:length(subjects)
     subject = subjects(i);
     subID = subject.name;
@@ -62,13 +66,13 @@ for i=1:length(subjects)
             segment = split(segment{end},'-');
             segment = segment{end};
             EEG.segment = segment;
-            EEG.task = 'Resting';
+            EEG.task = 'Task';
             nEEGs(j) = EEG;
         end
         EEGs = nEEGs;
         clear('nEEGs');
     else        
-        EEGs(1).task = 'resting';
+        EEGs(1).task = 'Task';
     end
 
     %%

@@ -6,18 +6,20 @@
     },
     "workspace":{
         "description":"",
-        "base_path":"D:/OneDrive - CCLAB/Data/Lily/derivatives"       
+        "base_path":"D:/Data/DEAP/derivatives"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"D:/OneDrive - CCLAB/Data/Lily",
-        "reference_file":"SubID_2024-12-04_12-23-51.vhdr",
-        "format":"vhdr",
+        "base_path":"D:/Data/DEAP",
+        "reference_file":"SubID.mat",
+        "format":"mat",
         "trials":false,
         "segments":false,
-        "labels":"",
+        "labels":"channel_10-20_32.json",
+        "participants_file":"Participants.json",
         "derivatives":"",
-        "clean_data":true,
+        "clean_data":false,
+        "average_ref":false,
         "BIDS":false
     },
     "tmp_path":{
