@@ -17,11 +17,15 @@ for i=1:length(EEGs)
     file_sec = split(EEG.filename,'_');
     SubID   = file_sec{1};
     task    = strcat('task-',strrep(strrep(strrep(EEGs(i).task,'_',''),'-',''),' ',''));
-    desc    = 'desc-preproc';
+    if(~isempty(find(contains(file_sec,'desc'),1)))
+        desc = file_sec{find(contains(file_sec,'desc'),1)};
+    else
+        desc    = 'desc-preproc';
+    end
     if(properties.general_params.meeg_data.segments)
         filename = strcat(SubID,'_',task,'_',file_sec{end},'_',desc,'.set');
     else
-        filename = strcat(SubID,'_',task,'_',desc,'_',file_sec{end},'.set');
+        filename = strcat(SubID,'_',task,'_',desc,'.set');
     end
     save(fullfile(subject_path,filename),'-struct','EEG','-mat','-v7.3');
 end

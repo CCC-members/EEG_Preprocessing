@@ -1,6 +1,4 @@
-function EEGs = process_clean_data(properties,EEGs)
-
-
+function OutEEGs = process_clean_data(properties,EEGs)
 
 clean_art_params    = properties.preproc_params.clean_data.clean_artifacts;
 decompose_ica       = clean_art_params.decompose_ica;
@@ -49,8 +47,12 @@ for i=1:length(EEGs)
 
         end
         [EEG,changes] = eeg_checkset(EEG);
-        EEGs(i) = EEG;
-    catch
+        OutEEGs(i) = EEG;
+    catch Ex
+        disp('--------------------------------------------------------------------------');
+        disp("-->> ERROR");
+        disp(Ex.message);
+        disp('--------------------------------------------------------------------------');
         continue;
     end
 end

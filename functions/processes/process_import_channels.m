@@ -1,4 +1,4 @@
-function EEGs = process_import_channels(properties,EEGs)
+function OutEEGs = process_import_channels(properties,EEGs)
 
 for e=1:length(EEGs)
     EEG = EEGs(e);
@@ -84,7 +84,7 @@ for e=1:length(EEGs)
     %         EEG = pop_select(EEG, 'nochannel', reject_indx);
     %     end
     %
-    newEEGs(e) = EEG;
+    OutEEGs(e) = EEG;
 end
-    EEGs = newEEGs;
+    
 end

@@ -6,19 +6,19 @@
     },
     "workspace":{
         "description":"",
-        "base_path":"D:/Data/DEAP/derivatives"       
+        "base_path":"E:/Data/Neuroimmunology/Data/Exploratory_analysis"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"D:/Data/DEAP",
-        "reference_file":"SubID.mat",
-        "format":"mat",
+        "base_path":"E:/Data/Neuroimmunology/Data/Updated Data",
+        "reference_file":"eeg/sub-1001_task-Resting_Segment-0.asc",
+        "format":"asc",
         "trials":false,
-        "segments":false,
-        "labels":"channel_10-20_32.json",
+        "segments":true,
+        "labels":"",
         "participants_file":"Participants.json",
         "derivatives":"",
-        "clean_data":false,
+        "clean_data":true,
         "average_ref":false,
         "BIDS":false
     },

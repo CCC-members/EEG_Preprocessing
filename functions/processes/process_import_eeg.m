@@ -139,7 +139,7 @@ if(isequal(modality,'EEG'))
         case '.asc'
             if(properties.general_params.meeg_data.segments)
                 files = dir(fullfile(basepath,'*.asc'));
-                files([files.isdir]) = [];
+                files([files.isdir]) = [];                
                 for i=1:length(files)
                     file = files(i);
                     EEG                     = eeg_emptyset;
@@ -151,6 +151,13 @@ if(isequal(modality,'EEG'))
                     EEG.data = data';
                     table = readtable(fullfile(file.folder,file.name));
                     labels = table.Properties.VariableNames;
+                    if(contains(labels,'_CPz'))
+                        ref_chann = 'CPz';
+                    elseif(contains(labels,'_Cz'))
+                        ref_chann = 'Cz';
+                    else
+                        ref_chann = 'Ave';
+                    end
                     labels              = replace(replace(labels,'_CPz',''),'_Cz','');
                     EEG.chanlocs            = cell2struct(labels,'labels');
                     EEG.nbchan              = length(EEG.chanlocs);
@@ -160,6 +167,7 @@ if(isequal(modality,'EEG'))
                     EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
                     EEG.trials              = 1;
                     EEGs(i) = EEG;
+                    
                 end
             else
                 EEG                     = eeg_emptyset;
@@ -219,7 +227,7 @@ if(isequal(modality,'EEG'))
 
                 pInfo.SubID = subID;
                 pInfo.Age = data_info.age;
-                pInfo.Sex = data_info.sex;
+                pInfo.Gender = data_info.sex;
                 if(isfile(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')))
                     participants = jsondecode(fileread(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')));
                     participants(end+1) = pInfo;
@@ -229,6 +237,22 @@ if(isequal(modality,'EEG'))
                 saveJSON(participants,fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json'));                     
             end
     end
+
+    % This will run cleanline on all channels, scanning for lines +/- 1 Hz around the 50 Hz frequencies.
+    % Each epoch will be cleaned individually and epochs containing lines that are significantly sinusoidal at
+    % the p<=0.01 level will be cleaned.
+    for i=1:length(EEGs)
+        EEG = EEGs(i);
+        EEG   = pop_cleanline(EEG, 'Bandwidth',2,'ChanCompIndices',[1:EEG.nbchan] , ...
+            'SignalType','Channels','ComputeSpectralPower',true,'LineFrequencies',[50] , ...
+            'NormalizeSpectrum',false,'LineAlpha',0.01,'PaddingFactor',2,'PlotFigures',false, ...
+            'ScanForLines',true,'SmoothingFactor',100,'VerbosityLevel',1, ...
+            'SlidingWinLength',EEG.pnts/EEG.srate,'SlidingWinStep',EEG.pnts/EEG.srate);
+        [newEEGs(i),changes] = eeg_checkset(EEG);
+    end
+    EEGs = newEEGs;
+    clear('newEEGs');
+
     % Downsalmpling data
     if( properties.preproc_params.clean_data.downsample.run && EEG(1).srate > properties.preproc_params.clean_data.downsample.srate)
         for i=1:length(EEGs)
@@ -243,7 +267,8 @@ if(isequal(modality,'EEG'))
             EEG                 = pop_reref(EEG,[]);
             [newEEGs(i),changes] = eeg_checkset(EEG);
         end
-        EEGs = newEEGs;        
+        EEGs = newEEGs;    
+        clear('newEEGs');
     end
 
     % Filtering data
@@ -260,10 +285,13 @@ if(isequal(modality,'EEG'))
     end
 
     % Getting Participants description
-    partic_file = fullfile(fileparts(basepath),properties.general_params.meeg_data.participants_file);
+    partic_file = fullfile(properties.general_params.meeg_data.base_path,properties.general_params.meeg_data.participants_file);
     if(isfile(partic_file))
-        participants = jsondecode(fileread(partic_file));
-        pInfo = participants(find(ismember({participants.SubID},subID),1));
+        parts = jsondecode(fileread(partic_file));
+        pInfo = parts(find(ismember({parts.SubID},subID),1));
+        pInfo.Nchan = EEG.nbchan;
+        pInfo.RefChann = ref_chann;
+        pInfo.NSegments = length(files);
         if(isfile(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')))
             participants = jsondecode(fileread(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')));
             participants(end+1) = pInfo;
@@ -271,7 +299,7 @@ if(isequal(modality,'EEG'))
             participants(1) = pInfo;
         end       
         saveJSON(participants,fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json'));
-    end
+    end   
 
 elseif(isequal(modality,'MEG'))
     MEEGs = import_meg_format(subID, preprocessed_params, data_path);
