@@ -55,39 +55,29 @@ for i=1:length(subjects)
     EEGs = process_import_channels(properties,EEGs);
 
     %%
+    %%  step 3: Import events
+    %%
+    disp('--------------------------------------------------------------------------');
+    disp("-->> Importing EEG events");
+    disp('--------------------------------------------------------------------------');
+    EEGs = process_import_events(properties, EEGs);
+
+    %%
     %% step 3: cleaning data
     %%
     disp('--------------------------------------------------------------------------');
     disp("-->> Correct continuous data using Artifact Subspace Reconstruction (ASR)");
     disp('--------------------------------------------------------------------------');
-    if(properties.general_params.meeg_data.clean_data)
-        EEGs = process_clean_data(properties, EEGs);
-    end
+    EEGs = process_clean_data(properties, EEGs);
 
     %%
-    %% step 4: Import and edit events
+    %% step 4: Export and edit events
     %%
     disp('--------------------------------------------------------------------------');
     disp("-->> Selecting data events");
     disp('--------------------------------------------------------------------------');
-    if(properties.general_params.meeg_data.clean_data && ~isempty(properties.preproc_params.select_events.events))
-        EEGs = process_import_events(properties, EEGs);
-    elseif(properties.general_params.meeg_data.segments)        
-        EEGs(cellfun(@isempty, {EEGs.filename})) = [];
-        for j=1:length(EEGs)
-            EEG = EEGs(j);
-            segment = split(EEG.filename,'_');
-            segment = split(segment{end},'-');
-            segment = segment{end};
-            EEG.segment = segment;
-            EEG.task = 'Task';
-            nEEGs(j) = EEG;
-        end
-        EEGs = nEEGs;
-        clear('nEEGs');
-    else
-        EEGs(1).task = 'Task';
-    end
+    EEGs = process_select_events(properties, EEGs);
+    
 
     %%
     %% step 5:

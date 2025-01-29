@@ -2,25 +2,22 @@
     "modality":"EEG",
     "description":"",
     "eeglab":{
-        "base_path":"D:/Develop/Tools/eeglab"
+        "base_path":"/mnt/Develop/Tools/EEGLAB"
     },
     "workspace":{
         "description":"",
-        "base_path":"E:/Data/Neuroimmunology/Data/Exploratory_analysis"       
+        "base_path":"/mnt/Data/Data_report/CHBMP_EEG_and_MRI/ds_bids_cbm_loris_24_11_21/derivatives"       
     },
     "meeg_data":{
         "description":"",
-        "base_path":"E:/Data/Neuroimmunology/Data/Updated Data",
-        "reference_file":"eeg/sub-1001_task-Resting_Segment-0.asc",
-        "format":"asc",
+        "base_path":"/mnt/Data/Data_report/CHBMP_EEG_and_MRI/ds_bids_cbm_loris_24_11_21",
+        "reference_file":"eeg/SubID_task-protmap_eeg.edf",
+        "format":"edf",
         "trials":false,
-        "segments":true,
-        "labels":"",
-        "participants_file":"Participants.json",
-        "derivatives":"",
-        "clean_data":true,
-        "average_ref":false,
-        "BIDS":false
+        "segments":false,
+        "labels_file":"",
+        "participants_file":"participants.tsv",        
+        "BIDS":true
     },
     "tmp_path":{
         "description":"",

@@ -67,7 +67,12 @@ else
     %% Starting EEGLAB
     %%
     addpath(properties.general_params.eeglab.base_path);
-    eeglab nogui;    
+    eeglab nogui;   
+    PLUGINLIST = evalin('base', 'PLUGINLIST');
+    isInstalled = find(ismember({PLUGINLIST.plugin},{'Cleanline'}),1);
+    if(isempty(isInstalled) || ~isInstalled )
+        plugin_askinstall('Cleanline',[],1);
+    end
 
     %%
     %% Calling dataset function to analysis

@@ -1,0 +1,15 @@
+{
+    "events_description":"Type the events that you want to select from the data. If you want to extract all data leave the events list empty. For select a specific event fill the list like the events_example tab",
+    "select_events":[
+        "eyes_open",
+        "eyes_closed",
+        "photic_stimulation"
+    ],
+    "events_example":[
+        "eyes_open",
+        "eyes_closed",
+        "photic_stimulation",
+        "recuperation",
+        "another_event"
+    ]
+}

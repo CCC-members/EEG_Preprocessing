@@ -166,8 +166,7 @@ if(isequal(modality,'EEG'))
                     EEG.xmax                 = EEG.xmin+(EEG.pnts-1)*(1/EEG.srate);
                     EEG.times               = (0:EEG.pnts-1)/EEG.srate.*1000;
                     EEG.trials              = 1;
-                    EEGs(i) = EEG;
-                    
+                    EEGs(i) = EEG;                    
                 end
             else
                 EEG                     = eeg_emptyset;
@@ -237,61 +236,26 @@ if(isequal(modality,'EEG'))
                 saveJSON(participants,fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json'));                     
             end
     end
-
-    % This will run cleanline on all channels, scanning for lines +/- 1 Hz around the 50 Hz frequencies.
-    % Each epoch will be cleaned individually and epochs containing lines that are significantly sinusoidal at
-    % the p<=0.01 level will be cleaned.
-    for i=1:length(EEGs)
-        EEG = EEGs(i);
-        EEG   = pop_cleanline(EEG, 'Bandwidth',2,'ChanCompIndices',[1:EEG.nbchan] , ...
-            'SignalType','Channels','ComputeSpectralPower',true,'LineFrequencies',[50] , ...
-            'NormalizeSpectrum',false,'LineAlpha',0.01,'PaddingFactor',2,'PlotFigures',false, ...
-            'ScanForLines',true,'SmoothingFactor',100,'VerbosityLevel',1, ...
-            'SlidingWinLength',EEG.pnts/EEG.srate,'SlidingWinStep',EEG.pnts/EEG.srate);
-        [newEEGs(i),changes] = eeg_checkset(EEG);
-    end
-    EEGs = newEEGs;
-    clear('newEEGs');
-
-    % Downsalmpling data
-    if( properties.preproc_params.clean_data.downsample.run && EEG(1).srate > properties.preproc_params.clean_data.downsample.srate)
-        for i=1:length(EEGs)
-            EEGs(i) = pop_resample(EEG(i),250);
-        end
-    end
-
-    % Apply average reference
-    if(properties.general_params.meeg_data.average_ref)
-        for i=1:length(EEGs)
-            EEG = EEGs(i);
-            EEG                 = pop_reref(EEG,[]);
-            [newEEGs(i),changes] = eeg_checkset(EEG);
-        end
-        EEGs = newEEGs;    
-        clear('newEEGs');
-    end
-
-    % Filtering data
-    if(properties.general_params.meeg_data.clean_data)
-        min_freq = properties.preproc_params.clean_data.min_freq;
-        max_freq = properties.preproc_params.clean_data.max_freq;
-        for i=1:length(EEGs)
-            EEG = EEGs(i);
-            EEG = pop_eegfiltnew(EEG, 'locutoff', min_freq, 'hicutoff',max_freq, 'filtorder', 3300);
-            [newEEGs(i),changes] = eeg_checkset(EEG);
-        end
-        EEGs = newEEGs;
-        clear('newEEGs');
-    end
-
+   
     % Getting Participants description
     partic_file = fullfile(properties.general_params.meeg_data.base_path,properties.general_params.meeg_data.participants_file);
     if(isfile(partic_file))
-        parts = jsondecode(fileread(partic_file));
-        pInfo = parts(find(ismember({parts.SubID},subID),1));
-        pInfo.Nchan = EEG.nbchan;
-        pInfo.RefChann = ref_chann;
-        pInfo.NSegments = length(files);
+        [~,~,extP] = fileparts(partic_file);
+        if(isequal(extP,'.json'))
+            parts = jsondecode(fileread(partic_file));
+            pInfo = parts(find(ismember({parts.SubID},subID),1));
+            pInfo.Nchan = EEG.nbchan;
+            pInfo.RefChann = ref_chann;
+            pInfo.NSegments = length(files);
+        else
+            opts        = detectImportOptions(partic_file, FileType="text");
+            parts       = table2struct(readtable(partic_file,opts));
+            participantR = parts(find(ismember({parts.participant_id},subID),1));
+            pInfo.SubID = participantR.participant_id;
+            pInfo.Nchan = EEG.nbchan;
+            pInfo.Sex = participantR.sex;
+        end
+        
         if(isfile(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')))
             participants = jsondecode(fileread(fullfile(properties.general_params.workspace.base_path,'eeglab','Participants.json')));
             participants(end+1) = pInfo;
